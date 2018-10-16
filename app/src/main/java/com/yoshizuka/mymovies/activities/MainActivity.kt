@@ -4,10 +4,12 @@ import android.app.SearchManager
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.FragmentManager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import com.yoshizuka.mymovies.R
 import com.yoshizuka.mymovies.adapters.MovieAdapter
+import com.yoshizuka.mymovies.fragments.MovieFragment
 import com.yoshizuka.mymovies.fragments.MovieListFragment
 import com.yoshizuka.mymovies.models.entities.Movie
 import com.yoshizuka.mymovies.models.services.MovieApiService
@@ -35,6 +37,13 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener {
         setContentView(R.layout.activity_main)
 
         searchViewAction()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+        return true
     }
 
     /**
@@ -76,6 +85,15 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener {
     private fun showMovies(movies: List<Movie>) {
         val fragment = MovieListFragment()
         fragment.movies = movies
+        toolbar_search?.onActionViewCollapsed()
+
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+
+        // Si on fait une recharche depuis la vue des détails l'on aura une back stack en trop
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
         val transaction = supportFragmentManager.beginTransaction()
 
         // Replace whatever is in the fragment_container view with this fragment,
@@ -87,8 +105,27 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener {
         transaction.commit()
     }
 
-    private fun showMovieDetail() {
+    private fun showMovieDetail(movie: Movie) {
+        setSupportActionBar(toolbar)
 
+        supportActionBar?.title = ""
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+
+
+        val fragment = MovieFragment()
+        fragment.movie = movie
+        val transaction = supportFragmentManager.beginTransaction()
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, fragment)
+        transaction.addToBackStack(null)
+
+        // Commit the transaction
+        transaction.commit()
     }
 
     /**
@@ -96,5 +133,6 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener {
      */
     override fun onClick(movie: Movie) {
         Log.d("Movie", "id = ${movie.id}")
+        showMovieDetail(movie)
     }
 }

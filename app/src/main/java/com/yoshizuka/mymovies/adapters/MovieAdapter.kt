@@ -1,14 +1,18 @@
 package com.yoshizuka.mymovies.adapters
 
+import android.content.Context
+import android.graphics.Point
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.squareup.picasso.Picasso
 import com.yoshizuka.mymovies.R
 import com.yoshizuka.mymovies.models.entities.Movie
 import kotlinx.android.synthetic.main.adapter_movie.view.*
+import kotlin.math.roundToInt
 
 /**
  * Gestion des items de la liste
@@ -23,9 +27,15 @@ class MovieAdapter(
     /**
      * L'écouteur de l'adapter
      */
-    var mListener: OnMovieAdapterListener? = null
+    private var mListener: OnMovieAdapterListener? = null
+
+    /**
+     * Le context intialiser dans le onCreateViewHolder
+     */
+    private lateinit var mContext: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+        mContext = parent.context;
         if(parent.context is OnMovieAdapterListener) {
             mListener = parent.context as OnMovieAdapterListener
         }
@@ -39,12 +49,20 @@ class MovieAdapter(
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
         Log.d("Adapter", "Titre : " + if(movie.name == "") movie.title else movie.name)
-        if(movie.title == "")
+        if(movie.mediaType == "tv")
             holder.name.text = movie.name
         else
             holder.name.text = movie.title
 
-        Picasso.get().load("https://image.tmdb.org/t/p/h100/" + movie.posterPath).into(holder.image)
+        // recup de la taille de l'écran
+        val wm = mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = wm.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        val min = if(size.x < size.y) size.x else size.y
+        val imgWidth = min * 0.23f
+
+        Picasso.get().load("https://image.tmdb.org/t/p/original${movie.posterPath}").resize(imgWidth.toInt(), 0).into(holder.image)
 
         holder.itemView.setOnClickListener { mListener?.onClick(movie) }
     }
