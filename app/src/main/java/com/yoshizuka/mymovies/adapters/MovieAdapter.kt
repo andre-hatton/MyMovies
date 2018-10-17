@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import com.squareup.picasso.Picasso
 import com.yoshizuka.mymovies.R
+import com.yoshizuka.mymovies.managers.Image
 import com.yoshizuka.mymovies.models.entities.Movie
 import kotlinx.android.synthetic.main.adapter_movie.view.*
 import kotlin.math.roundToInt
@@ -49,10 +50,7 @@ class MovieAdapter(
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
         Log.d("Adapter", "Titre : " + if(movie.name == "") movie.title else movie.name)
-        if(movie.mediaType == "tv")
-            holder.name.text = movie.name
-        else
-            holder.name.text = movie.title
+        holder.name.text = movie.getNameOrTitle()
 
         // recup de la taille de l'écran
         val wm = mContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -62,7 +60,7 @@ class MovieAdapter(
         val min = if(size.x < size.y) size.x else size.y
         val imgWidth = min * 0.23f
 
-        Picasso.get().load("https://image.tmdb.org/t/p/original${movie.posterPath}").resize(imgWidth.toInt(), 0).into(holder.image)
+        Picasso.get().load("${Image.IMAGE_URL}${movie.posterPath}").resize(imgWidth.toInt(), 0).into(holder.image)
 
         holder.itemView.setOnClickListener { mListener?.onClick(movie) }
     }
