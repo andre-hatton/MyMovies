@@ -17,16 +17,26 @@ import java.lang.Exception
 
 object Image {
 
+    /**
+     * URL de base des image (j'ai mis seulement original comme taille d'image)
+     */
     const val IMAGE_URL = "https://image.tmdb.org/t/p/original"
 
+    /**
+     * Element picasso qui va permettre de recupérer l'image souhaité
+     */
     private var mTarget : Target? = null
 
+    /**
+     * Partage l'image du film ainsi que son titre
+     * @param context Le context
+     * @param url Url de base de l'image
+     * @param movie Le film a partagé
+     */
     fun shareImage(context: Context, url: String, movie: Movie) {
         val extension = movie.posterPath.substringAfterLast(".", "")
-        mTarget = object : Target{
-
+        mTarget = object : Target {
             override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                Log.d("Image", "prepare loaded $url${movie.posterPath}")
             }
 
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
@@ -34,7 +44,7 @@ object Image {
             }
 
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                Log.d("Image", "bitmap loaded $bitmap")
+                // fonction de partage si l'image n'est pas null
                 if(bitmap != null) {
                     val uri = bitmapToUri(context, bitmap, extension)
                     val intent = Intent(Intent.ACTION_SEND)
@@ -44,7 +54,6 @@ object Image {
                     context.startActivity(intent)
                 }
             }
-
         }
 
         if(mTarget != null) {
@@ -52,9 +61,18 @@ object Image {
         }
     }
 
+    /**
+     * Convertit une image bitmap en une Uri pour pouvoir la partager (ou faire autre chose)
+     * @param context Le context
+     * @param bitmap L'image bitmap
+     * @param extension L'extension de l'image
+     *
+     * @return Uri Le lien vers le fichier correspondant au bitmap, null si une erreur d'écriture ou d'extension
+     */
     fun bitmapToUri(context: Context, bitmap: Bitmap, extension: String) : Uri? {
         var bmpUri : Uri? = null
         try {
+            // Chemin du fichier a créer
             val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image_${System.currentTimeMillis()}.${extension}")
             val out = FileOutputStream(file)
             if(extension == "png") {
@@ -67,7 +85,7 @@ object Image {
             out.close()
             bmpUri = Uri.fromFile(file)
         } catch (e: IOException) {
-
+            e.printStackTrace()
         }
         return bmpUri
     }

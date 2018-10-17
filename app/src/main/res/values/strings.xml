@@ -4,4 +4,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home_text">Bienvenue sur l\'application.\n\nChercher des films et série via la recherche en haut.
+    </string>
+    <string name="empty_movie">Aucune série ou film trouvés</string>
 </resources>

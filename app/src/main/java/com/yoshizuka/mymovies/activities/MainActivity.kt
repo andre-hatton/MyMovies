@@ -102,6 +102,13 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
         fragment.movies = movies
         toolbar_search?.onActionViewCollapsed()
 
+        // Vide le texte du quand le container est vide
+        if(movies.isEmpty()) {
+            container_empty.text = getString(R.string.empty_movie)
+        } else {
+            container_empty.text = ""
+        }
+
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
@@ -120,12 +127,16 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
         transaction.commit()
     }
 
+    /**
+     * Charge le détail d'un film
+     * @param movie Le film à charger
+     */
     private fun showMovieDetail(movie: Movie) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
 
         val fragment = MovieFragment()
         fragment.movie = movie
-        val transaction = supportFragmentManager.beginTransaction()
-
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.fragment_container, fragment)
@@ -149,6 +160,7 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
 
     /**
      * Lors du click sur un item
+     * @param movie Le film choisi
      */
     override fun onClick(movie: Movie) {
         mCurrentMovie = movie
@@ -157,9 +169,9 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
 
     /**
      * Appelé à la création de la vue
+     * @param movie Le film de la fiche
      */
     override fun onCreate(movie: Movie) {
-        println("on create")
         mCurrentMovie = movie
         setSupportActionBar(toolbar)
 
