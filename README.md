@@ -8,6 +8,6 @@ Librairies et outils utilisés :
 - constraintLayout
 - recyclerView
 - retrofit pour l'api
-- rxjava et rxandroid pour la gestion des données
+- rxjava pour la gestion des données
 - picasso pour les images
 - gson pour la conversion du json en objet
