@@ -57,13 +57,21 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
      */
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
+        return true
+    }
+
+    /**
+     * Gestion de l'action retour
+     */
+    override fun onBackPressed() {
+        super.onBackPressed()
+
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
 
         toolbar_search.visibility = View.VISIBLE
         toolbar_share.visibility = View.GONE
-        return true
     }
 
     /**
