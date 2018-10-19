@@ -24,7 +24,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, MovieFragment.OnMovieFragmentListener {
+class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, MovieFragment.OnMovieFragmentListener,
+    MovieListFragment.OnMovieListFragmentListener {
 
     /**
      * Création du client api
@@ -50,6 +51,10 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
         searchViewAction()
     }
 
+    /**
+     * Appelé lors de l'action retour depuis le détail d'un film
+     * @return true si l'action a réussi
+     */
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -168,12 +173,27 @@ class MainActivity : AppCompatActivity(), MovieAdapter.OnMovieAdapterListener, M
     }
 
     /**
-     * Appelé à la création de la vue
+     * Appelé sur la création du fragment de la liste des films
+     * @param isEmpty Si la liste est vide
+     */
+    override fun onCreateMovieListFragment(isEmpty: Boolean) {
+        // Vide le texte du quand le container est vide
+        if(isEmpty) {
+            container_empty.text = getString(R.string.empty_movie)
+        } else {
+            container_empty.text = ""
+        }
+    }
+
+    /**
+     * Appelé à la création de la vue des détails d'un film
      * @param movie Le film de la fiche
      */
-    override fun onCreate(movie: Movie) {
+    override fun onCreateMovieFragment(movie: Movie) {
         mCurrentMovie = movie
         setSupportActionBar(toolbar)
+
+        container_empty.text = ""
 
         supportActionBar?.title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

@@ -24,10 +24,19 @@ class MovieListFragment : Fragment() {
      */
     var movies: List<Movie> = arrayListOf()
 
+    /**
+     * L'écouteur
+     */
+    private var mListener: OnMovieListFragmentListener? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         retainInstance = true
+        if(context is OnMovieListFragmentListener) {
+            mListener = context as OnMovieListFragmentListener
+            mListener?.onCreateMovieListFragment(movies.isEmpty())
+        }
         return inflater.inflate(R.layout.fragment_movie_list, container, false)
     }
 
@@ -39,6 +48,17 @@ class MovieListFragment : Fragment() {
 
         movie_list.layoutManager = manager
         movie_list.adapter = adapter
+    }
+
+    /**
+     * Action du fragement vers l'activity
+     */
+    interface OnMovieListFragmentListener {
+
+        /**
+         * Appelé à la création de la vue
+         */
+        fun onCreateMovieListFragment(isEmpty: Boolean)
     }
 
 }

@@ -40,7 +40,7 @@ class MovieFragment : Fragment() {
         retainInstance = true
         if(context is OnMovieFragmentListener) {
             mListener = context as OnMovieFragmentListener
-            mListener?.onCreate(movie)
+            mListener?.onCreateMovieFragment(movie)
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_movie, container, false)
@@ -98,7 +98,7 @@ class MovieFragment : Fragment() {
         /**
          * Appelé à la création de la vue
          */
-        fun onCreate(movie: Movie)
+        fun onCreateMovieFragment(movie: Movie)
     }
 
 
